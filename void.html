@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Checker</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: auto;
+            opacity: 0.5;
+            visibility: hidden;
+        }
+        .checked {
+            visibility: visible;
+        }
+        .counter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 15vw;
+            color: white;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="counter">22</div>
+    <div class="container">
+        <img id="photo" class="photo" src="void1.jpeg" alt="Photo" onclick="toggleCheck()">
+        <img id="checkmark" class="checkmark" src="voidlogo.png" alt="Checked">
+    </div>
+    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
+    <script>
+        const photos = Array.from({ length: 22 }, (_, i) => `void${i + 1}.jpeg`);
+        let currentPhotoIndex = 0;
+        let uncheckedCount = photos.length;
+
+        const photoElement = document.getElementById('photo');
+        const checkmarkElement = document.getElementById('checkmark');
+        const counterElement = document.getElementById('counter');
+
+        function toggleCheck() {
+            checkmarkElement.classList.toggle('checked');
+            updateCounter();
+        }
+
+        function nextPhoto() {
+            if (currentPhotoIndex < photos.length - 1) {
+                currentPhotoIndex++;
+                updatePhoto();
+            }
+        }
+
+        function previousPhoto() {
+            if (currentPhotoIndex > 0) {
+                currentPhotoIndex--;
+                updatePhoto();
+            }
+        }
+
+        function updatePhoto() {
+            photoElement.src = photos[currentPhotoIndex];
+            checkmarkElement.classList.remove('checked'); // Reset checkmark visibility
+            updateCounter();
+        }
+
+        function updateCounter() {
+            uncheckedCount = photos.length - document.querySelectorAll('.checked').length;
+            counterElement.textContent = uncheckedCount;
+        }
+
+        const hammer = new Hammer(document.body);
+        hammer.on('swipeleft', nextPhoto);
+        hammer.on('swiperight', previousPhoto);
+
+        // Initialize the first photo and counter
+        updatePhoto();
+    </script>
+</body>
+</html>
